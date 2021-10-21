@@ -1,4 +1,4 @@
-# TWRAP
+# TWrap
 TWrap provides a C++ wrapper class around the Eigen3 Tensor class. Its API enables the creation of tensors of arbitrary size and implements addition and multiplication among them.
 
 ### dependencies
