@@ -5,7 +5,7 @@ TWrap provides a C++ wrapper class around the Eigen3 Tensor class. Its API enabl
 In case Eigen3 is not found automatically, it has to be linked via `-D Eigen3_DIR=/pathToEigen3/share/eigen3/cmake`.
 
 ### build
-TensorWrapper is build using cmake.
+TWrap is build using cmake.
 
     mkdir build && cd build
     cmake (OPTIONS) ..
