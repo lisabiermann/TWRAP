@@ -5,7 +5,12 @@
 #include "catch.hpp"
 #include <TWrap/TWrap.h>
 
-TEST_CASE("test", "[general]")
+TEST_CASE("initialization", "[general]")
 {
-    REQUIRE(true);
+    using namespace TWrap;
+    TWrap::TWrap t;
+    REQUIRE(t.Dim1 == 1);
+    REQUIRE(t.Dim2 == 0);
+    REQUIRE(t.Dim3 == 0);
+    REQUIRE(t.Dim4 == 0);
 }
