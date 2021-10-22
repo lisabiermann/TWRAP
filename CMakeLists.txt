@@ -4,8 +4,8 @@
 
 cmake_minimum_required(VERSION 3.13)
 project(
-  TWRAP
-  VERSION 1.0
+  TWrap
+  VERSION 0.0.1
   LANGUAGES C CXX)
 
 # -------------------------------- setup cmake --------------------------------
@@ -13,17 +13,48 @@ if(POLICY CMP0074)
   cmake_policy(SET CMP0074 NEW) # use <packagename>_ROOT as search path
 endif(POLICY CMP0074)
 
-list(APPEND CMAKE_MODULE_PATH "${TWRAP_SOURCE_DIR}/cmake")
+list(APPEND CMAKE_MODULE_PATH "${TWrap_SOURCE_DIR}/tools/cmake")
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "RELEASE")
 endif(NOT CMAKE_BUILD_TYPE)
 
+set(CMAKE_CXX_FLAGS_DEBUG
+    "${CMAKE_CXX_FLAGS_DEBUG} -pedantic -Wall -Wextra -Wmissing-declarations -Wmissing-include-dirs -Wshadow"
+)
+set(CMAKE_CXX_FLAGS_RELEASE
+    "${CMAKE_CXX_FLAGS_RELEASE} -O3 -pedantic -Wall -Wextra -Wshadow")
+
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/bin")
 
+find_package(PkgConfig)
 find_package(Eigen3 3.3.0 REQUIRED)
 
 add_subdirectory(src)
+
+# -------------------------- export as cmake package --------------------------
+if(PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+  include(CMakePackageConfigHelpers)
+  write_basic_package_version_file(
+    TWrapConfigVersion.cmake
+    VERSION ${PACKAGE_VERSION}
+    COMPATIBILITY AnyNewerVersion)
+
+  set(ExportList
+    TWrap
+    )
+
+  export(
+    TARGETS ${ExportList}
+    NAMESPACE TWrap::
+    FILE TWrapTargets.cmake
+    )
+
+  configure_file(tools/cmake/TWrapConfig.cmake.in TWrapConfig.cmake @ONLY)
+
+
+    export(PACKAGE TWrap)
+endif()
 
 # ------------------------ Doxygen --------------------------------------------
 
@@ -49,3 +80,10 @@ else (DOXYGEN_FOUND)
 endif(DOXYGEN_FOUND)
 
 # -------------------- Testing ---------------------------------------------------
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+    include(CTest)
+endif()
+
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTING)
+    add_subdirectory(tests)
+endif()
