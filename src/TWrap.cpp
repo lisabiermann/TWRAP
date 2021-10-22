@@ -6,9 +6,9 @@
  * @file
  */
 
-#include <TWrap.h>
+#include <TWrap/TWrap.h>
 
-namespace TWRAP
+namespace TWrap
 {
 
 /*
@@ -32,7 +32,7 @@ void TWrap::write()
     std::cout << this->T0 << std::endl;
   else
     throw std::runtime_error("Wrong tensor dimensions!");
-};
+}
 
 /*
  * Addition of tensors
@@ -54,7 +54,7 @@ TWrap TWrap::operator+(TWrap t)
   }
   else
     throw std::runtime_error("Trying to add tensors with wrong dimensions!");
-};
+}
 
 /*
  * Multiplication of tensors
@@ -121,4 +121,4 @@ TWrap TWrap::operator*(TWrap t)
         "Trying to multiply tensors with wrong dimensions!");
 }
 
-} // namespace TWRAP
+} // namespace TWrap
