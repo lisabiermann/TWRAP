@@ -1,0 +1,22 @@
+# SPDX-FileCopyrightText: 2021 Lisa Biermann
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: develop Mac CI
+
+on:
+  push:
+    branches: [ develop ]
+    
+jobs:
+  build-mac:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+          persist-credentials: false
+    - name: installPackages
+      run: brew install eigen
+    - name: cmake
+      run: mkdir build && cd build && cmake ..
+    - name: make
+      run: cd build && cmake --build . -j
