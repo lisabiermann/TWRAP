@@ -18,4 +18,5 @@ ConstructorInitializerAllOnOneLineOrOnePerLine: 'true'
 IndentWidth: '2'
 Language: Cpp
 TabWidth: '2'
+
 ...
