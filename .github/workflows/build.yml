@@ -17,7 +17,7 @@ jobs:
       with:
           persist-credentials: false
     - name : installPackages
-      run : sudo apt-get install --no-install-recommends --yes libeigen3-dev
+      run : sudo apt-get install --no-install-recommends --yes libeigen3-dev doxygen
     - name: cmake
       run: mkdir build && cd build && cmake .. 
     - name: make
