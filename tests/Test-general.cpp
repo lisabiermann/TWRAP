@@ -10,21 +10,25 @@ using namespace TWrap;
 TEST_CASE("initialization", "[general]")
 {
   WTens<double, 1> test(1);
-
   REQUIRE((test(0) == 0.0 && test(1) == 0.0));
 }
 
 TEST_CASE("value access", "[general]")
 {
-  WTens<double, 3> test(1, 4, 3);
-  test(0, 0, 0) = 1.0;
-  test(0, 1, 0) = 2.0;
+  WTens<double, 1> test(5);
+  test(0) = 1.0;
+  test(1) = 2.0;
+  test(2) = 3.0;
+  test(3) = 4.0;
+  test(4) = 5.0;
 
-  REQUIRE(((test(0, 0, 0) == 1.0) && (test(0, 1, 0) == 2.0)));
+  REQUIRE(((test(0) == 1.0) && (test(1) == 2.0) && (test(2) == 3.0) &&
+           (test(3) == 4.0) && (test(4) == 5.0)));
 }
 
 TEST_CASE("addition of tensors", "[general]")
 {
+
   WTens<double, 2> test1(2, 2);
   WTens<double, 2> test2(2, 2);
 
