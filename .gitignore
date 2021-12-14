@@ -37,3 +37,7 @@ build
 # Editor files
 .vscode
 .atom
+
+# Storage files
+*_store.cpp
+*_store.h
