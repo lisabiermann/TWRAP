@@ -15,3 +15,7 @@ add_library(TWrap ${header} ${src})
 target_link_libraries(TWrap PUBLIC Eigen3::Eigen)
 target_include_directories(TWrap PUBLIC ${CMAKE_SOURCE_DIR}/include)
 target_compile_features(TWrap PUBLIC cxx_std_14)
+
+add_executable(template template.cpp)
+target_link_libraries(template TWrap)
+target_compile_features(template PUBLIC cxx_std_14)
