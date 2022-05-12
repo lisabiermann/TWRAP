@@ -16,10 +16,10 @@ namespace TWrap
 template <typename InnerType, std::size_t dim> class WTens
 {
 private:
-  
-
 public:
   Tensor<InnerType, dim> tens;
+
+  // Constructor with initialization to zero
   template <typename... IndexTypes> WTens(IndexTypes... args) : tens(args...)
   {
     tens.setZero();
@@ -40,6 +40,22 @@ public:
   template <typename... IndexTypes> InnerType &operator()(IndexTypes... args)
   {
     return tens(args...);
+  }
+
+  /*
+   * Set tensor elements using nested initializer list
+   */
+  void setValues(std::initializer_list<InnerType> values)
+  {
+    this->tens.setValues(values);
+  }
+  void setValues(std::initializer_list<std::initializer_list<InnerType>> values)
+  {
+    this->tens.setValues(values);
+  }
+  void setValues(std::initializer_list<std::initializer_list<std::initializer_list<InnerType>>> values)
+  {
+    this->tens.setValues(values);
   }
 
   /*
@@ -70,7 +86,8 @@ public:
     return result;
   }
 
-  template <std::size_t dimin> WTens<InnerType, 1> operator*(WTens<InnerType, dimin> t)
+  template <std::size_t dimin>
+  WTens<InnerType, 1> operator*(WTens<InnerType, dimin> t)
   {
     Eigen::array<Eigen::IndexPair<InnerType>, 1> product_dims = {
         Eigen::IndexPair<InnerType>(1, 0)};
@@ -79,11 +96,7 @@ public:
     return result;
   }
 
-  WTens concat(WTens<InnerType, dim> v, int index)
-  {
-    return v*double(index);
-  }
-  
+  WTens concat(WTens<InnerType, dim> v, int index) { return v * double(index); }
 
   /*
    * write tensor

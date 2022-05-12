@@ -16,11 +16,7 @@ TEST_CASE("initialization", "[general]")
 TEST_CASE("value access", "[general]")
 {
   WTens<double, 1> test(5);
-  test(0) = 1.0;
-  test(1) = 2.0;
-  test(2) = 3.0;
-  test(3) = 4.0;
-  test(4) = 5.0;
+  test.setValues({1, 2, 3, 4, 5});
 
   REQUIRE(((test(0) == 1.0) && (test(1) == 2.0) && (test(2) == 3.0) &&
            (test(3) == 4.0) && (test(4) == 5.0)));
@@ -55,13 +51,8 @@ TEST_CASE("multiplication by vector", "[general]")
   WTens<double, 1> vec(2);
   WTens<double, 2> test(2, 2);
 
-  test(0, 0) = 1.0;
-  test(0, 1) = 2.0;
-  test(1, 0) = 3.0;
-  test(1, 1) = 4.0;
-
-  vec(0) = 5.0;
-  vec(1) = 6.0;
+  test.setValues({{1, 2}, {3, 4}});
+  vec.setValues({5, 6});
 
   auto res = test * vec;
 
