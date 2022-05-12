@@ -10,22 +10,35 @@
 
 #include <TWrap/TWrap.h>
 #include <exception>
+#include <unsupported/Eigen/CXX11/Tensor>
 
 using namespace std;
 using namespace TWrap;
 
-int main(int argc, char *argv[])
+int main()
 {
   try
   {
-    // addition of tensors with wrong dimensions
-    WTens<double, 2> test1(2, 2);
-    WTens<double, 2> test2(3, 3);
+    WTens<double, 1> vec(3);
+    WTens<double, 2> test(3, 3);
 
-    test1(0, 0) = 1.0;
-    test2(0, 0) = 3.3;
+    test(0, 0) = 1.0;
+    test(0, 1) = 2.0;
+    test(1, 0) = 3.0;
+    test(1, 1) = 4.0;
 
-    WTens<double, 2> test3 = test1 + test2;
+    vec(0) = 5.0;
+    vec(1) = 6.0;
+
+    auto res = test * vec;
+
+    test.print();
+    vec.print();
+    res.print();
+
+    auto res2 = WTens::concat<double, 2>(vec, 2);
+
+    res2.print();
   }
   catch (std::exception &e)
   {

@@ -16,9 +16,10 @@ namespace TWrap
 template <typename InnerType, std::size_t dim> class WTens
 {
 private:
-  Tensor<InnerType, dim> tens;
+  
 
 public:
+  Tensor<InnerType, dim> tens;
   template <typename... IndexTypes> WTens(IndexTypes... args) : tens(args...)
   {
     tens.setZero();
@@ -69,22 +70,25 @@ public:
     return result;
   }
 
-  WTens operator*(WTens t)
+  template <std::size_t dimin> WTens<InnerType, 1> operator*(WTens<InnerType, dimin> t)
   {
-    const auto &d1 = this->tens.dimensions();
-    const auto &d2 = t.tens.dimensions();
-
-    if (d2[t.tens.NumDimensions - 1] == d1[this->tens.NumDimensions - 1])
-    {
-      WTens<InnerType, dim> result;
-      result.tens = this->tens * t.tens;
-      /* todo: implement proper Einstein sum convention */
-      return result;
-    }
-    else
-      throw std::runtime_error(
-          "Trying to multiply tensors with wrong dimensions!");
+    Eigen::array<Eigen::IndexPair<InnerType>, 1> product_dims = {
+        Eigen::IndexPair<InnerType>(1, 0)};
+    WTens<InnerType, 1> result;
+    result.tens = this->tens.contract(t.tens, product_dims);
+    return result;
   }
+
+  WTens concat(WTens<InnerType, dim> v, int index)
+  {
+    return v*double(index);
+  }
+  
+
+  /*
+   * write tensor
+   */
+  void print() { std::cout << this->tens << std::endl; }
 };
 
 } // namespace TWrap

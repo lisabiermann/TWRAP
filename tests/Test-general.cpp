@@ -28,14 +28,13 @@ TEST_CASE("value access", "[general]")
 
 TEST_CASE("addition of tensors", "[general]")
 {
-
   WTens<double, 2> test1(2, 2);
   WTens<double, 2> test2(2, 2);
 
   test1(0, 0) = 1.0;
   test2(0, 0) = 3.3;
 
-  WTens<double, 2> test3 = test1 + test2;
+  auto test3 = test1 + test2;
 
   REQUIRE(test3(0, 0) == 4.3);
 }
@@ -46,15 +45,14 @@ TEST_CASE("multiplication by scalar", "[general]")
   test(0)      = 50.0;
   double scale = 2.0;
 
-  WTens<double, 1> res = test * scale;
+  auto res = test * scale;
 
   REQUIRE(res(0) == 100.0);
 }
 
 TEST_CASE("multiplication by vector", "[general]")
 {
-  /* todo: multiply tensor with actual vector (dim = 1) */
-  WTens<double, 2> vec(2, 2);
+  WTens<double, 1> vec(2);
   WTens<double, 2> test(2, 2);
 
   test(0, 0) = 1.0;
@@ -62,10 +60,10 @@ TEST_CASE("multiplication by vector", "[general]")
   test(1, 0) = 3.0;
   test(1, 1) = 4.0;
 
-  vec(0, 0) = 5.0;
-  vec(1, 0) = 6.0;
+  vec(0) = 5.0;
+  vec(1) = 6.0;
 
-  WTens<double, 2> res = test * vec;
+  auto res = test * vec;
 
-  REQUIRE(res(0, 0) == 5.0);
+  REQUIRE((res(0) == 17.0 && res(1) == 39.0));
 }
