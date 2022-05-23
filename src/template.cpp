@@ -19,33 +19,35 @@ int main()
 {
   try
   {
-    std::cout << "multiplication of nxn tensor with n-dim-vector" << std::endl;
-    auto start = std::chrono::steady_clock::now();
-    WTens<double, 1> vec(4);
-    WTens<double, 2> test(4, 4);
+    {
+      std::cout << "multiplication of 10^10 tensor with 10-dim-vector"
+                << std::endl;
+      auto start = std::chrono::steady_clock::now();
 
-    vec.setValues({15,16,17,18});
-    test.setValues({{1,2,3,4},{5,6,7,8}});
-    
-    auto res = test * vec;
+      WTens<double, 8> tens1(10, 10, 10, 10, 10, 10, 10, 10);
+      tens1.setRandom();
+      std::cout << "initialized tens1 with " << std::endl;
+      tens1.print_DimOut();
 
-    auto finish = std::chrono::steady_clock::now();
-    double elapsed_time =
-        std::chrono::duration_cast<std::chrono::milliseconds>(finish - start)
-            .count();
-    std::cout << "elapsed time: " << elapsed_time << " ms \n";
+      WTens<double, 1> tens2(10);
+      tens2.setRandom();
+      std::cout << "initialized tens2 with " << std::endl;
+      tens2.print_DimOut();
 
-    // WTens<double, 1> vector(4);
-    // vector.setValues({1,2,3,4});
-    // vector.print();
-    
-    // WTens<double, 2> tensor2(2,2);
-    // tensor2.setValues({{1,2},{3,4}});
-    // tensor2.print();
+      for (int i = 0; i < tens1.get_NumDimensions(); i++)
+      {
+        std::cout << "concat tensors at indices (" << i << " , " << 0 << ") ..."
+                  << std::endl;
+        auto res = tens1.concat7D(tens2, i, 0);
+        res.print_DimOut();
+      }
 
-    // WTens<double, 3> tensor3(2,2,2);
-    // tensor3.setValues({{{1,1},{2,2}},{{3,3},{4,4}},{{5,5},{6,6}}});
-    // tensor3.print();
+      auto finish = std::chrono::steady_clock::now();
+      double elapsed_time =
+          std::chrono::duration_cast<std::chrono::milliseconds>(finish - start)
+              .count();
+      std::cout << "elapsed time: " << elapsed_time << " ms \n";
+    }
   }
   catch (std::exception &e)
   {
