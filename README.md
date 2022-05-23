@@ -14,4 +14,4 @@ cd build
 ./bin/template
 ```
 
-Unit can be run after compiling using `ctest`.
+Unit tests can be run after compiling using `ctest`.
