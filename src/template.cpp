@@ -36,9 +36,9 @@ int main()
 
       for (int i = 0; i < tens1.get_NumDimensions(); i++)
       {
-        std::cout << "concat tensors at indices (" << i << " , " << 0 << ") ..."
-                  << std::endl;
-        auto res = tens1.concat7D(tens2, i, 0);
+        std::cout << "concat tensors at indices (" << i << " , " << 0
+                  << ") ... " << std::endl;
+        auto res = tens1.concat(tens2, i, 0);
         res.print_DimOut();
       }
 

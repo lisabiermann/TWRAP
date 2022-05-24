@@ -5,14 +5,14 @@
 add_library(Catch catch.cpp)
 target_link_libraries(Catch PRIVATE TWrap)
 target_include_directories(Catch INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
-target_compile_features(Catch PUBLIC cxx_std_14)
+target_compile_features(Catch PUBLIC cxx_std_17)
 
 set(TESTDIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 file(GLOB SOURCE_FILES "Test-*.cpp" CONFIURE_DEPENDS)
 add_executable(GenericTests ${SOURCE_FILES})
 target_link_libraries(GenericTests Catch TWrap)
-target_compile_features(GenericTests PUBLIC cxx_std_14)
+target_compile_features(GenericTests PUBLIC cxx_std_17)
 
 include(Catch)
 catch_discover_tests(GenericTests)

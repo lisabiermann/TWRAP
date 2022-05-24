@@ -53,7 +53,7 @@ TEST_CASE("multiplication of 2D tensor by vector", "[general]")
   vec.setValues({10, 11});
   test2D.setValues({{1, 2}, {3, 4}});
 
-  auto res = test2D.concat1D(vec, 1, 0);
+  auto res = test2D.concat(vec, 1, 0);
 
   REQUIRE((res(0) == 32.0 && res(1) == 74.0));
 }
@@ -68,7 +68,7 @@ TEST_CASE("multiplication of 3D tensor by vector", "[general]")
                   {{6, 7, 8}, {9, 10, 11}}});
   vec.setValues({10, 11, 12});
 
-  auto res = test3D.concat2D(vec, 2, 0);
+  auto res = test3D.concat(vec, 2, 0);
 
   REQUIRE((res(0, 0) == 68.0 && res(0, 1) == 167.0 && res(1, 0) == 134.0 &&
            res(1, 1) == 233.0 && res(2, 0) == 233.0 && res(2, 1) == 332.0));
@@ -82,7 +82,7 @@ TEST_CASE("multiplication of two tensors", "[general]")
   tens1.setValues({{1, 2, 3}, {6, 5, 4}});
   tens2.setValues({{1, 2}, {4, 5}, {5, 6}});
 
-  auto res = tens1.concat2D(tens2, 1, 0);
+  auto res = tens1.concat(tens2, 1, 0);
 
   REQUIRE((res(0, 0) == 24.0 && res(1, 1) == 61.0));
 }

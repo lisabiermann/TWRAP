@@ -120,55 +120,23 @@ public:
   }
 
   /**
-   * @brief concat1D concatenate two tensors at specified indices
+   * @brief concatND concatenate two tensors at specified indices
    * @param index_first index of first tensor to be concatenated
    * @param index_second index of second tensor to be concatenated
-   * @return WTens with dim = 1
+   * @return WTens
    */
   template <std::size_t dimin>
-  WTens<InnerType, 1> concat1D(WTens<InnerType, dimin> tensor_in,
-                               int index_first,
-                               int index_second = 0)
+  decltype(auto) concat(WTens<InnerType, dimin> tensor_in,
+                        int index_first,
+                        int index_second = 0)
   {
     Eigen::array<Eigen::IndexPair<InnerType>, 1> product_dims = {
         Eigen::IndexPair<InnerType>(index_first, index_second)};
-    WTens<InnerType, 1> result;
-    result.tens = this->tens.contract(tensor_in.tens, product_dims);
-    return result;
-  }
 
-  /**
-   * @brief concat2D concatenate two tensors at specified indices
-   * @param index_first index of first tensor to be concatenated
-   * @param index_second index of second tensor to be concatenated
-   * @return WTens with dim = 2
-   */
-  template <std::size_t dimin>
-  WTens<InnerType, 2> concat2D(WTens<InnerType, dimin> tensor_in,
-                               int index_first,
-                               int index_second = 0)
-  {
-    Eigen::array<Eigen::IndexPair<InnerType>, 1> product_dims = {
-        Eigen::IndexPair<InnerType>(index_first, index_second)};
-    WTens<InnerType, 2> result;
-    result.tens = this->tens.contract(tensor_in.tens, product_dims);
-    return result;
-  }
+    const std::size_t dimout_calc =
+        dim + dimin - 2; // two indices are contracted
 
-  /**
-   * @brief concat7D concatenate two tensors at specified indices
-   * @param index_first index of first tensor to be concatenated
-   * @param index_second index of second tensor to be concatenated
-   * @return WTens with dim = 7
-   */
-  template <std::size_t dimin>
-  WTens<InnerType, 7> concat7D(WTens<InnerType, dimin> tensor_in,
-                               int index_first,
-                               int index_second = 0)
-  {
-    Eigen::array<Eigen::IndexPair<InnerType>, 1> product_dims = {
-        Eigen::IndexPair<InnerType>(index_first, index_second)};
-    WTens<InnerType, 7> result;
+    WTens<InnerType, dimout_calc> result;
     result.tens = this->tens.contract(tensor_in.tens, product_dims);
     return result;
   }
