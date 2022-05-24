@@ -10,6 +10,7 @@
 
 #include <TWrap/TWrap.h>
 #include <exception>
+#include <chrono>
 #include <unsupported/Eigen/CXX11/Tensor>
 
 using namespace std;
