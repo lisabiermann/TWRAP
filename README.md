@@ -47,7 +47,7 @@ Unit tests can be run after compiling using `ctest`.
   ```
   
 - tensor operations
-  - addition of tensor
+  - addition of tensors
   
   Two tensors are added via
   ```
@@ -63,6 +63,7 @@ Unit tests can be run after compiling using `ctest`.
   ```
   
   - tensor multiplication
+  
   Two tensors are multiplied using the `concat` function. You need to specify the indices which will be contracted. Below you see the example for a matix-vector multiplication.
   ```
   WTens<double, 1> vec(2);
