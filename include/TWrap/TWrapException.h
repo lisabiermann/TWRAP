@@ -61,4 +61,16 @@ public:
   }
 };
 
+class TWrapInvalidSet : public TWrapExceptionBase
+{
+public:
+  TWrapInvalidSet(char const *file_in,
+                  int line_in,
+                  char const *function_in,
+                  std::string output_in = "Invalid set")
+      : TWrapExceptionBase(file_in, line_in, function_in, output_in)
+  {
+  }
+};
+
 } // namespace TWrap

@@ -57,18 +57,69 @@ public:
    */
   void setValues(const std::initializer_list<InnerType> values)
   {
-    this->tens.setValues(values);
+    bool wrong_format = (int(values.size()) != this->get_dimensions(0));
+
+    if (wrong_format)
+    {
+      std::string msg = "Wrong initializer list format";
+      throw TWrapInvalidSet(__FILE__, __LINE__, __func__, msg);
+    }
+    else
+    {
+      this->tens.setValues(values);
+    }
   }
   void setValues(
       const std::initializer_list<std::initializer_list<InnerType>> values)
   {
-    this->tens.setValues(values);
+    std::vector<int> dims_val;
+    dims_val.push_back(values.size());
+    for (auto &row : values)
+    {
+      dims_val.push_back(row.size());
+      break;
+    }
+
+    bool wrong_format = (this->get_dimensions() != dims_val);
+
+    if (wrong_format)
+    {
+      std::string msg = "Wrong initializer list format";
+      throw TWrapInvalidSet(__FILE__, __LINE__, __func__, msg);
+    }
+    else
+    {
+      this->tens.setValues(values);
+    }
   }
   void
   setValues(const std::initializer_list<
             std::initializer_list<std::initializer_list<InnerType>>> values)
   {
-    this->tens.setValues(values);
+    std::vector<int> dims_val;
+    dims_val.push_back(values.size());
+    for (auto &column : values)
+    {
+      dims_val.push_back(column.size());
+      for (auto &row : column)
+      {
+        dims_val.push_back(row.size());
+        break;
+      }
+      break;
+    }
+
+    bool wrong_format = (this->get_dimensions() != dims_val);
+
+    if (wrong_format)
+    {
+      std::string msg = "Wrong initializer list format";
+      throw TWrapInvalidSet(__FILE__, __LINE__, __func__, msg);
+    }
+    else
+    {
+      this->tens.setValues(values);
+    }
   }
 
   /**
@@ -87,7 +138,7 @@ public:
   template <std::size_t dimin> WTens operator+(WTens<InnerType, dimin> t)
   {
     bool wrong_dimensions =
-        (dim != dimin) or (this->get_dimensions() != t.get_dimensions());
+        (dim != dimin) || (this->get_dimensions() != t.get_dimensions());
 
     if (wrong_dimensions)
     {
@@ -170,7 +221,7 @@ public:
    * @brief get_dimensions
    * @return vector storing the sizes of the dimensions of the tensor
    */
-  std::vector<int> get_dimensions()
+  std::vector<int> get_dimensions() const
   {
     std::vector<int> res;
     const auto &d = this->tens.dimensions();
