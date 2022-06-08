@@ -1,0 +1,29 @@
+# SPDX-FileCopyrightText: 2021 Lisa Biermann
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: doxygen deploy
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+          persist-credentials: false
+    - name : installPackages
+      run : sudo apt-get update && sudo apt-get install --no-install-recommends --yes libeigen3-dev 
+    - name: cmake
+      run: mkdir build && cd build && cmake ..
+    - name: make
+      run: cd build && cmake --build . -j -t doc
+    - name: deploy
+      uses: JamesIves/github-pages-deploy-action@v4.3.3
+       with:
+          branch: gh-pages # The branch the action should deploy to.
+          folder: build/html # The folder the action should deploy.
+          target-folder: documentation
