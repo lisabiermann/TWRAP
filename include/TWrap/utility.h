@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include <iostream>
+#include <TWrap/TWrapException.h>
 #include <unsupported/Eigen/CXX11/Tensor>
 
 using namespace Eigen;
