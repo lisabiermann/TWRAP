@@ -21,7 +21,7 @@ int main()
   {
     std::cout << "multiplication of 10^10 tensor with 10-dim-vector"
               << std::endl;
-    auto start = std::chrono::steady_clock::now();
+    auto start_tens = std::chrono::steady_clock::now();
 
     WTens<double, 8> tens1(10, 10, 10, 10, 10, 10, 10, 10);
     tens1.setRandom();
@@ -41,11 +41,12 @@ int main()
       res.print_DimOut();
     }
 
-    auto finish = std::chrono::steady_clock::now();
-    double elapsed_time =
-        std::chrono::duration_cast<std::chrono::milliseconds>(finish - start)
+    auto finish_tens = std::chrono::steady_clock::now();
+    double elapsed_time_tens =
+        std::chrono::duration_cast<std::chrono::milliseconds>(finish_tens -
+                                                              start_tens)
             .count();
-    std::cout << "elapsed time: " << elapsed_time << " ms \n";
+    std::cout << "elapsed time: " << elapsed_time_tens << " ms \n";
   }
 
   catch (TWrapExceptionBase &e)
