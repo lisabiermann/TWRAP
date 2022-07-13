@@ -9,6 +9,7 @@
  */
 
 #include <TWrap/TWrap.h>
+#include <chrono>
 #include <exception>
 #include <unsupported/Eigen/CXX11/Tensor>
 
