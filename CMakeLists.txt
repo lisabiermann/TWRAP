@@ -52,8 +52,7 @@ if(PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
 
   configure_file(tools/cmake/TWrapConfig.cmake.in TWrapConfig.cmake @ONLY)
 
-
-    export(PACKAGE TWrap)
+  export(PACKAGE TWrap)
 endif()
 
 # ------------------------ Doxygen --------------------------------------------
