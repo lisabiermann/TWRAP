@@ -26,6 +26,29 @@ find_package(Eigen3 3.3.0 REQUIRED)
 
 add_subdirectory(src)
 
+# -------------------------- export as cmake package --------------------------
+if(PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+  include(CMakePackageConfigHelpers)
+  write_basic_package_version_file(
+    TWrapConfigVersion.cmake
+    VERSION ${PACKAGE_VERSION}
+    COMPATIBILITY AnyNewerVersion)
+
+  set(ExportList
+    TWrap
+    )
+
+  export(
+    TARGETS ${ExportList}
+    NAMESPACE TWrap::
+    FILE TWrapTargets.cmake
+    )
+
+  configure_file(tools/cmake/TWrapConfig.cmake.in TWrapConfig.cmake @ONLY)
+
+  export(PACKAGE TWrap)
+endif()
+
 # ------------------------ Doxygen --------------------------------------------
 
 find_package(Doxygen)
