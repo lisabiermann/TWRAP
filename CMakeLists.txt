@@ -26,7 +26,6 @@ find_package(Eigen3 3.3.0 REQUIRED)
 
 add_subdirectory(src)
 
-<<<<<<< HEAD
 # -------------------------- export as cmake package --------------------------
 if(PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
   include(CMakePackageConfigHelpers)
@@ -50,8 +49,6 @@ if(PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
   export(PACKAGE TWrap)
 endif()
 
-=======
->>>>>>> main
 # ------------------------ Doxygen --------------------------------------------
 
 find_package(Doxygen)
