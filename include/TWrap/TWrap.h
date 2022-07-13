@@ -3,10 +3,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include <TWrap/utility.h>
-#include <iostream>
-#include <unsupported/Eigen/CXX11/Tensor>
-
-using namespace Eigen;
 
 /**
  * @file
@@ -17,7 +13,7 @@ namespace TWrap
 template <typename InnerType, std::size_t dim> class WTens
 {
 public:
-  Tensor<InnerType, dim> tens;
+  Eigen::Tensor<InnerType, dim> tens;
 
   /**
    * @brief Constructor with initialization to zero
@@ -45,10 +41,10 @@ public:
   }
 
   /**
-   * @brief Set whole tensor to constant
+   * @brief Set whole tensor to value
    * @param value value to which all tensor elements should be set
    */
-  void setConstant(InnerType value) { this->tens.setConstant(value); }
+  void setToValue(const InnerType value) { this->tens.setConstant(value); }
 
   /**
    * @brief Set whole tensor to random values
@@ -59,19 +55,79 @@ public:
    * @brief setValues Set tensor elements using nested initializer list
    * @param values initializer_list storing values to be set as tensor entries
    */
-  void setValues(std::initializer_list<InnerType> values)
+  void setValues(const std::initializer_list<InnerType> values)
   {
-    this->tens.setValues(values);
+    bool wrong_format = (int(values.size()) != this->get_dimensions(0));
+
+    if (wrong_format)
+    {
+      std::string msg = "Wrong initializer list format";
+      throw TWrapInvalidSet(__FILE__, __LINE__, __func__, msg);
+    }
+    else
+    {
+      this->tens.setValues(values);
+    }
   }
-  void setValues(std::initializer_list<std::initializer_list<InnerType>> values)
+  void setValues(
+      const std::initializer_list<std::initializer_list<InnerType>> values)
   {
-    this->tens.setValues(values);
+    std::vector<int> dims_val;
+    dims_val.push_back(values.size());
+    for (auto &row : values)
+    {
+      dims_val.push_back(row.size());
+      break;
+    }
+
+    bool wrong_format = (this->get_dimensions() != dims_val);
+
+    if (wrong_format)
+    {
+      std::string msg = "Wrong initializer list format";
+      throw TWrapInvalidSet(__FILE__, __LINE__, __func__, msg);
+    }
+    else
+    {
+      this->tens.setValues(values);
+    }
   }
   void
-  setValues(std::initializer_list<
+  setValues(const std::initializer_list<
             std::initializer_list<std::initializer_list<InnerType>>> values)
   {
-    this->tens.setValues(values);
+    std::vector<int> dims_val;
+    dims_val.push_back(values.size());
+    for (auto &column : values)
+    {
+      dims_val.push_back(column.size());
+      for (auto &row : column)
+      {
+        dims_val.push_back(row.size());
+        break;
+      }
+      break;
+    }
+
+    bool wrong_format = (this->get_dimensions() != dims_val);
+
+    if (wrong_format)
+    {
+      std::string msg = "Wrong initializer list format";
+      throw TWrapInvalidSet(__FILE__, __LINE__, __func__, msg);
+    }
+    else
+    {
+      this->tens.setValues(values);
+    }
+  }
+
+  /**
+   * @brief overload of << operator for WTens
+   */
+  friend std::ostream &operator<<(std::ostream &out, const WTens &t)
+  {
+    return out << t.tens;
   }
 
   /**
@@ -79,19 +135,22 @@ public:
    * @param t WTens to be added to class member
    * @return new WTens as sum of two WTens
    */
-  WTens operator+(WTens t)
+  template <std::size_t dimin> WTens operator+(WTens<InnerType, dimin> t)
   {
-    const auto &d1 = this->tens.dimensions();
-    const auto &d2 = t.tens.dimensions();
+    bool wrong_dimensions =
+        (dim != dimin) || (this->get_dimensions() != t.get_dimensions());
 
-    if (d1 == d2)
+    if (wrong_dimensions)
+    {
+      std::string msg = "Wrong dimensions in addition";
+      throw TWrapInvalidType(__FILE__, __LINE__, __func__, msg);
+    }
+    else
     {
       WTens<InnerType, dim> result;
       result.tens = this->tens + t.tens;
       return result;
     }
-    else
-      throw std::runtime_error("Trying to add tensors with wrong dimensions!");
   }
 
   /**
@@ -99,7 +158,7 @@ public:
    * @param scale scale
    * @return WTens with every entry multiplied by scale
    */
-  WTens operator*(InnerType scale)
+  WTens operator*(const InnerType scale)
   {
     WTens<InnerType, dim> result;
     result.tens = this->tens * scale;
@@ -112,7 +171,7 @@ public:
    * @param dim_chip dimension
    * @return WTens subtensor
    */
-  WTens<InnerType, 1> get_chip(int offset, int dim_chip)
+  WTens<InnerType, 1> get_chip(const int offset, const int dim_chip)
   {
     WTens<InnerType, 1> result;
     result.tens = this->tens.chip(offset, dim_chip);
@@ -120,70 +179,49 @@ public:
   }
 
   /**
-   * @brief concat1D concatenate two tensors at specified indices
+   * @brief concatND concatenate two tensors at specified indices
    * @param index_first index of first tensor to be concatenated
    * @param index_second index of second tensor to be concatenated
-   * @return WTens with dim = 1
+   * @return WTens
    */
   template <std::size_t dimin>
-  WTens<InnerType, 1> concat1D(WTens<InnerType, dimin> tensor_in,
-                               int index_first,
-                               int index_second = 0)
+  decltype(auto) concat(WTens<InnerType, dimin> tensor_in,
+                        const std::size_t index_first,
+                        const std::size_t index_second = 0)
   {
-    Eigen::array<Eigen::IndexPair<InnerType>, 1> product_dims = {
-        Eigen::IndexPair<InnerType>(index_first, index_second)};
-    WTens<InnerType, 1> result;
-    result.tens = this->tens.contract(tensor_in.tens, product_dims);
-    return result;
-  }
+    bool index_out_of_range =
+        (dim < index_first + 1) || (dimin < index_second + 1);
 
-  /**
-   * @brief concat2D concatenate two tensors at specified indices
-   * @param index_first index of first tensor to be concatenated
-   * @param index_second index of second tensor to be concatenated
-   * @return WTens with dim = 2
-   */
-  template <std::size_t dimin>
-  WTens<InnerType, 2> concat2D(WTens<InnerType, dimin> tensor_in,
-                               int index_first,
-                               int index_second = 0)
-  {
-    Eigen::array<Eigen::IndexPair<InnerType>, 1> product_dims = {
-        Eigen::IndexPair<InnerType>(index_first, index_second)};
-    WTens<InnerType, 2> result;
-    result.tens = this->tens.contract(tensor_in.tens, product_dims);
-    return result;
-  }
+    if (index_out_of_range)
+    {
+      std::string msg = "Index out of range";
+      throw TWrapInvalidGet(__FILE__, __LINE__, __func__, msg);
+    }
+    else
+    {
+      Eigen::array<Eigen::IndexPair<InnerType>, 1> product_dims = {
+          Eigen::IndexPair<InnerType>(index_first, index_second)};
 
-  /**
-   * @brief concat7D concatenate two tensors at specified indices
-   * @param index_first index of first tensor to be concatenated
-   * @param index_second index of second tensor to be concatenated
-   * @return WTens with dim = 7
-   */
-  template <std::size_t dimin>
-  WTens<InnerType, 7> concat7D(WTens<InnerType, dimin> tensor_in,
-                               int index_first,
-                               int index_second = 0)
-  {
-    Eigen::array<Eigen::IndexPair<InnerType>, 1> product_dims = {
-        Eigen::IndexPair<InnerType>(index_first, index_second)};
-    WTens<InnerType, 7> result;
-    result.tens = this->tens.contract(tensor_in.tens, product_dims);
-    return result;
+      const std::size_t dimout_calc =
+          dim + dimin - 2; // two indices are contracted
+
+      WTens<InnerType, dimout_calc> result;
+      result.tens = this->tens.contract(tensor_in.tens, product_dims);
+      return result;
+    }
   }
 
   /**
    * @brief get_NumDimensions
    * @return Number of dimensions of tensor
    */
-  int get_NumDimensions() { return this->tens.NumDimensions; }
+  int get_NumDimensions() const { return this->tens.NumDimensions; }
 
   /**
    * @brief get_dimensions
    * @return vector storing the sizes of the dimensions of the tensor
    */
-  std::vector<int> get_dimensions()
+  std::vector<int> get_dimensions() const
   {
     std::vector<int> res;
     const auto &d = this->tens.dimensions();
@@ -198,16 +236,21 @@ public:
    * @brief get_dimensions
    * @return dimension of specified dimension index
    */
-  int get_dimensions(int index)
+  int get_dimensions(const int index) const
   {
-    std::vector<int> res = this->get_dimensions();
-    return res[index];
-  }
+    bool index_out_of_range = (this->get_NumDimensions() < index + 1);
 
-  /**
-   * @brief print print tensor
-   */
-  void print() { std::cout << this->tens << std::endl; }
+    if (index_out_of_range)
+    {
+      std::string msg = "Index out of range";
+      throw TWrapInvalidGet(__FILE__, __LINE__, __func__, msg);
+    }
+    else
+    {
+      std::vector<int> res = this->get_dimensions();
+      return res[index];
+    }
+  }
 
   /**
    * @brief print_DimOut print information on dimensions of tensor

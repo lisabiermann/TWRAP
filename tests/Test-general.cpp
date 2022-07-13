@@ -13,6 +13,24 @@ TEST_CASE("initialization", "[general]")
   REQUIRE((test(0) == 0.0 && test(1) == 0.0));
 }
 
+TEST_CASE("wrong initialization 1D", "[!shouldfail]")
+{
+  WTens<double, 1> test(5);
+  test.setValues({1, 2, 3, 4});
+}
+
+TEST_CASE("wrong initialization 2D", "[!shouldfail]")
+{
+  WTens<double, 2> test(3, 4);
+  test.setValues({{1, 2}, {3, 4}});
+}
+
+TEST_CASE("wrong initialization 3D", "[!shouldfail]")
+{
+  WTens<double, 3> test(2, 3, 4);
+  test.setValues({{{1, 2}, {3, 4}}});
+}
+
 TEST_CASE("value access", "[general]")
 {
   WTens<double, 1> test(5);
@@ -35,6 +53,14 @@ TEST_CASE("addition of tensors", "[general]")
   REQUIRE(test3(0, 0) == 4.3);
 }
 
+TEST_CASE("addition of tensors with wrong dimensions", "[!shouldfail]")
+{
+  WTens<double, 2> test1(2, 2);
+  WTens<double, 2> test2(2, 3);
+
+  auto test3 = test1 + test2;
+}
+
 TEST_CASE("multiplication by scalar", "[general]")
 {
   WTens<double, 1> test(4);
@@ -53,7 +79,7 @@ TEST_CASE("multiplication of 2D tensor by vector", "[general]")
   vec.setValues({10, 11});
   test2D.setValues({{1, 2}, {3, 4}});
 
-  auto res = test2D.concat1D(vec, 1, 0);
+  auto res = test2D.concat(vec, 1, 0);
 
   REQUIRE((res(0) == 32.0 && res(1) == 74.0));
 }
@@ -64,11 +90,11 @@ TEST_CASE("multiplication of 3D tensor by vector", "[general]")
   WTens<double, 3> test3D(3, 2, 3);
 
   test3D.setValues({{{1, 2, 3}, {4, 5, 6}},
-                  {{3, 4, 5}, {6, 7, 8}},
-                  {{6, 7, 8}, {9, 10, 11}}});
+                    {{3, 4, 5}, {6, 7, 8}},
+                    {{6, 7, 8}, {9, 10, 11}}});
   vec.setValues({10, 11, 12});
 
-  auto res = test3D.concat2D(vec, 2, 0);
+  auto res = test3D.concat(vec, 2, 0);
 
   REQUIRE((res(0, 0) == 68.0 && res(0, 1) == 167.0 && res(1, 0) == 134.0 &&
            res(1, 1) == 233.0 && res(2, 0) == 233.0 && res(2, 1) == 332.0));
@@ -82,7 +108,18 @@ TEST_CASE("multiplication of two tensors", "[general]")
   tens1.setValues({{1, 2, 3}, {6, 5, 4}});
   tens2.setValues({{1, 2}, {4, 5}, {5, 6}});
 
-  auto res = tens1.concat2D(tens2, 1, 0);
+  auto res = tens1.concat(tens2, 1, 0);
 
   REQUIRE((res(0, 0) == 24.0 && res(1, 1) == 61.0));
+}
+
+TEST_CASE("multiplication of two tensors with invalid indices", "[!shouldfail]")
+{
+  WTens<double, 2> tens1(2, 3);
+  WTens<double, 2> tens2(3, 2);
+
+  tens1.setValues({{1, 2, 3}, {6, 5, 4}});
+  tens2.setValues({{1, 2}, {4, 5}, {5, 6}});
+
+  auto res = tens1.concat(tens2, 3, -1);
 }
