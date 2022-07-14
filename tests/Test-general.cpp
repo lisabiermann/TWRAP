@@ -144,3 +144,17 @@ TEST_CASE("Calculate Eigenvalues", "[general]")
 
   REQUIRE((res(0) == 1 && res(1) == 1));
 }
+
+TEST_CASE("Calculate Eigenvectors", "[general]")
+{
+  WTens<double, 2> mat(2, 2);
+  mat.setValues({{1, 0}, {0, 1}});
+  auto res = mat.CalcEigenvectors();
+
+  WTens<double, 1> vec1(2);
+  WTens<double, 1> vec2(2);
+  vec1 = res.get_chip(0, 0);
+  vec2 = res.get_chip(1, 1);
+
+  REQUIRE((vec1(0) == 1 && vec1(1) == 0 && vec2(0) == 0 && vec2(1) == 1));
+}

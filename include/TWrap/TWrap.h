@@ -212,8 +212,8 @@ public:
   }
 
   /**
-   * @brief CalcEigenvalues calculate the Eigenvalues of a 2-dim tensor using
-   * Eigen's SelfAdjointEigenSolver
+   * @brief CalcEigenvalues calculate the Eigenvalues of a 2-dim nxn-tensor
+   * using Eigen's SelfAdjointEigenSolver
    * @return 1-dim tensor that contains the Eigenvalues
    */
   decltype(auto) CalcEigenvalues()
@@ -239,6 +239,38 @@ public:
     }
 
     return vec;
+  }
+
+  /**
+   * @brief CalcEigenvectors calculate the Eigenvectors of a 2-dim nxn-tensor
+   * using Eigen's SelfAdjointEigenSolver
+   * @return n-dim tensor that contains the Eigenvectors
+   */
+  decltype(auto) CalcEigenvectors()
+  {
+    if (this->get_NumDimensions() != 2 or
+        this->get_dimensions(0) != this->get_dimensions(1))
+    {
+      std::string msg = "Eigenvectors can only be calculated for a nxn-tensor";
+      throw TWrapInvalidType(__FILE__, __LINE__, __func__, msg);
+    }
+
+    Eigen::Map<Eigen::MatrixXd> matrix(
+        this->tens.data(), this->get_dimensions(0), this->get_dimensions(1));
+    Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> es;
+    es.compute(matrix);
+
+    WTens<double, 2> vecs(2, 2);
+
+    for (size_t i = 0; i < this->get_dimensions(0); i++)
+    {
+      for (size_t j = 0; j < this->get_dimensions(0); j++)
+      {
+        vecs(i, j) = es.eigenvectors().col(i)[j];
+      }
+    }
+
+    return vecs;
   }
 
   /**
