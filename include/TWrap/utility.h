@@ -4,6 +4,7 @@
 
 #include <TWrap/TWrapException.h>
 #include <unsupported/Eigen/CXX11/Tensor>
+#include "Eigen/Dense"
 
 using namespace Eigen;
 
