@@ -123,3 +123,24 @@ TEST_CASE("multiplication of two tensors with invalid indices", "[!shouldfail]")
 
   auto res = tens1.concat(tens2, 3, -1);
 }
+
+TEST_CASE("Eigenvalues wrong dimension 1", "[!shouldfail]")
+{
+  WTens<double, 1> vec(2);
+  auto res = vec.CalcEigenvalues();
+}
+
+TEST_CASE("Eigenvalues wrong dimension 2", "[!shouldfail]")
+{
+  WTens<double, 2> mat(2, 3);
+  auto res = mat.CalcEigenvalues();
+}
+
+TEST_CASE("Calculate Eigenvalues", "[general]")
+{
+  WTens<double, 2> mat(2, 2);
+  mat.setValues({{1, 0}, {0, 1}});
+  auto res = mat.CalcEigenvalues();
+
+  REQUIRE((res(0) == 1 && res(1) == 1));
+}
